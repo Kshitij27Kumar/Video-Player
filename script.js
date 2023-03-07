@@ -7,6 +7,12 @@ const duration = document.getElementById('duration')
 const progressBar = document.getElementById('progress-bar')
 const seek = document.getElementById('seek')
 const seekTooltip = document.getElementById('seek-tooltip')
+const volumeButton = document.getElementById('volume-button')
+const volumeIcons = document.querySelectorAll('.volume-button use')
+const volumeMute = document.querySelector('use[href="#volume-mute"]')
+const volumeLow = document.querySelector('use[href="#volume-low"]')
+const volumeHigh = document.querySelector('use[href="#volume-high"]')
+const volume = document.getElementById('volume')
 
 const videoWorks = document.createElement('video').canPlayType
 if (videoWorks) {
@@ -74,6 +80,30 @@ skipAhead = (event) => {
   seek.value = skipTo
 }
 
+updateVolume = () => {
+  if (video.muted) {
+    video.muted = false
+  }
+  video.volume = volume.value
+}
+
+updateVolumeIcon = () => {
+  volumeIcons.forEach((icon) => {
+    icon.classList.add('hidden')
+  })
+
+  volumeButton.setAttribute('data-title', 'Mute (m)')
+
+  if (video.muted || video.volume === 0) {
+    volumeMute.classList.remove('hidden')
+    volumeButton.setAttribute('data-title', 'Unmute (m)')
+  } else if (video.volume > 0 && video.volume <= 0.5) {
+    volumeLow.classList.remove('hidden')
+  } else {
+    volumeHigh.classList.remove('hidden')
+  }
+}
+
 playButton.addEventListener('click', togglePlay)
 video.addEventListener('play', updatePlayButton)
 video.addEventListener('pause', updatePlayButton)
@@ -82,3 +112,5 @@ video.addEventListener('timeupdate', updateTimeElapsed)
 video.addEventListener('timeupdate', updateProgress)
 seek.addEventListener('mousemove', updateSeekTooltip)
 seek.addEventListener('input', skipAhead)
+volume.addEventListener('input', updateVolume)
+video.addEventListener('volumechange', updateVolumeIcon)
