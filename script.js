@@ -14,6 +14,10 @@ const volumeLow = document.querySelector('use[href="#volume-low"]')
 const volumeHigh = document.querySelector('use[href="#volume-high"]')
 const volume = document.getElementById('volume')
 const playbackAnimation = document.getElementById('playback-animation')
+const fullscreenButton = document.getElementById('fullscreen-button')
+const videoContainer = document.getElementById('video-container')
+const fullscreenIcons = fullscreenButton.querySelectorAll('use')
+const pipButton = document.getElementById('pip-button')
 
 const videoWorks = document.createElement('video').canPlayType
 if (videoWorks) {
@@ -133,6 +137,84 @@ animatePlayback = () => {
   )
 }
 
+toggleFullScreen = () => {
+  if (document.fullscreenElement) {
+    document.exitFullscreen()
+  } else if (document.webkitFullscreenElement) {
+    // Need this to support Safari
+    document.webkitExitFullscreen()
+  } else if (videoContainer.webkitRequestFullscreen) {
+    // Need this to support Safari
+    videoContainer.webkitRequestFullscreen()
+  } else {
+    videoContainer.requestFullscreen()
+  }
+}
+
+updateFullscreenButton = () => {
+  fullscreeenIcons.forEach((icon) => {
+    icon.classList.toggle('hidden')
+  })
+  if (document.fullscreenElement) {
+    fullscreenButton.setAttribute('data-title', 'Exit full screen (f)')
+  } else {
+    fullscreenButton.setAttribute('data-title', 'Full screen (f)')
+  }
+}
+
+async function togglePip() {
+  try {
+    if (video !== document.pictureInPictureElement) {
+      pipButton.disabled = true
+      await video.requestPictureInPicture()
+    } else {
+      await document.exitPictureInPicture()
+    }
+  } catch (error) {
+    console.error(error)
+  } finally {
+    pipButton.disabled = false
+  }
+}
+
+hideControls = () => {
+  if (video.paused) {
+    return
+  }
+
+  videoControls.classList.add('hide')
+}
+
+showControls = () => {
+  videoControls.classList.remove('hide')
+}
+
+keyboardShortcuts = (event) => {
+  const { key } = event
+  switch (key) {
+    case 'k':
+      togglePlay()
+      animatePlayback()
+      if (video.paused) {
+        showControls()
+      } else {
+        setTimeout(() => {
+          hideControls()
+        }, 2000)
+      }
+      break
+    case 'm':
+      toggleMute()
+      break
+    case 'f':
+      toggleFullScreen()
+      break
+    case 'p':
+      togglePip()
+      break
+  }
+}
+
 playButton.addEventListener('click', togglePlay)
 video.addEventListener('play', updatePlayButton)
 video.addEventListener('pause', updatePlayButton)
@@ -146,3 +228,16 @@ video.addEventListener('volumechange', updateVolumeIcon)
 volumeButton.addEventListener('click', toggleMute)
 video.addEventListener('click', togglePlay)
 video.addEventListener('click', animatePlayback)
+fullscreenButton.addEventListener('click', toggleFullScreen)
+videoContainer.addEventListener('fullscreenchange', updateFullscreenButton)
+pipButton.addEventListener('click', togglePip)
+video.addEventListener('mouseenter', showControls)
+video.addEventListener('mouseleave', hideControls)
+videoControls.addEventListener('mouseenter', showControls)
+videoControls.addEventListener('mouseleave', hideControls)
+document.addEventListener('DOMContentLoaded', () => {
+  if (!('pictureInPictureEnabled' in document)) {
+    pipButton.classList.add('hidden')
+  }
+})
+document.addEventListener('keyup', keyboardShortcuts)
