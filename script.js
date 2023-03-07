@@ -104,6 +104,16 @@ updateVolumeIcon = () => {
   }
 }
 
+toggleMute = () => {
+  video.muted = !video.muted
+  if (video.muted) {
+    volume.setAttribute('data-title', volume.value)
+    volume.value = 0
+  } else {
+    volume.value = volume.dataset.value
+  }
+}
+
 playButton.addEventListener('click', togglePlay)
 video.addEventListener('play', updatePlayButton)
 video.addEventListener('pause', updatePlayButton)
@@ -114,3 +124,5 @@ seek.addEventListener('mousemove', updateSeekTooltip)
 seek.addEventListener('input', skipAhead)
 volume.addEventListener('input', updateVolume)
 video.addEventListener('volumechange', updateVolumeIcon)
+volumeButton.addEventListener('click', toggleMute)
+video.addEventListener('click', togglePlay)
