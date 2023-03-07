@@ -13,6 +13,7 @@ const volumeMute = document.querySelector('use[href="#volume-mute"]')
 const volumeLow = document.querySelector('use[href="#volume-low"]')
 const volumeHigh = document.querySelector('use[href="#volume-high"]')
 const volume = document.getElementById('volume')
+const playbackAnimation = document.getElementById('playback-animation')
 
 const videoWorks = document.createElement('video').canPlayType
 if (videoWorks) {
@@ -114,6 +115,24 @@ toggleMute = () => {
   }
 }
 
+animatePlayback = () => {
+  playbackAnimation.animate(
+    [
+      {
+        opacity: 1,
+        transform: 'scale(1)',
+      },
+      {
+        opacity: 0,
+        transform: 'scale(1)',
+      },
+    ],
+    {
+      duration: 500,
+    }
+  )
+}
+
 playButton.addEventListener('click', togglePlay)
 video.addEventListener('play', updatePlayButton)
 video.addEventListener('pause', updatePlayButton)
@@ -126,3 +145,4 @@ volume.addEventListener('input', updateVolume)
 video.addEventListener('volumechange', updateVolumeIcon)
 volumeButton.addEventListener('click', toggleMute)
 video.addEventListener('click', togglePlay)
+video.addEventListener('click', animatePlayback)

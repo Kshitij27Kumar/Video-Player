@@ -7,17 +7,10 @@ html {
   font-family: 'YouTube Noto', Roboto, Arial, Helvetica, sans-serif;
   height: 100%;
 }
-/* //:before selector inserts something before the content of each selected
- //element(s).
- //:after selector inserts something after the content of each 
-// selected element(s). */
 
 *,
 *::before,
 *::after {
-  /* //The value inherit what you see here basically tells the element to
-// inherit the value for the border-box property (border-box) from the above parent. */
-
   box-sizing: inherit;
   margin: 0;
   padding: 0;
@@ -219,6 +212,8 @@ button:hover::before {
 }
 
 input[type='range'] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
   height: 8.4px;
   background: transparent;
   cursor: pointer;
